@@ -351,12 +351,10 @@
       { name: 'Lethal Company', src: 'https://user15484.cn.imgto.link/public/20260629/img-5357.avif', ratio: 0.6667 },
       { name: 'Minecraft', src: 'https://user15484.cn.imgto.link/public/20260629/img-5674.avif', ratio: 0.6655 },
       { name: 'Outer Wilds', src: 'https://user15484.cn.imgto.link/public/20260629/img-5342.avif', ratio: 0.7767 },
-      { name: 'R.E.P.O.', src: 'https://user15484.cn.imgto.link/public/20260629/img-5399.avif', ratio: 0.6667 },
       { name: 'Rust', src: 'https://user15484.cn.imgto.link/public/20260629/img-5673.avif', ratio: 0.749 },
       { name: 'SCP: Secret Laboratory', src: 'https://user15484.cn.imgto.link/public/20260629/img-5344.avif', ratio: 0.7022 },
       { name: 'Slime Rancher', src: 'https://user15484.cn.imgto.link/public/20260629/img-5343.avif', ratio: 0.6655 },
       { name: 'Stardew Valley', src: 'https://user15484.cn.imgto.link/public/20260629/img-5328.avif', ratio: 0.75 },
-      { name: 'Team Fortress 2', src: 'https://user15484.cn.imgto.link/public/20260629/img-5404.avif', ratio: 0.6786 },
       { name: 'Terraria', src: 'https://user15484.cn.imgto.link/public/20260629/img-5670.avif', ratio: 0.6655 },
       { name: 'The Forest', src: 'https://user15484.cn.imgto.link/public/20260629/img-5363.avif', ratio: 0.6667 },
       { name: 'Undertale', src: 'https://user15484.cn.imgto.link/public/20260629/img-5356.avif', ratio: 0.7636 },
@@ -425,8 +423,8 @@
         ? Math.max(62, Math.min(78, Math.floor(width / 8.2)))
         : mobile
           ? Math.max(56, Math.min(70, Math.floor(width / 9.6)))
-          : Math.max(46, Math.min(62, Math.floor(width / 13.8)));
-      const minShortSide = compactMobile ? 44 : (mobile ? 38 : 30);
+          : Math.max(72, Math.min(98, Math.floor(width / 9.8)));
+      const minShortSide = compactMobile ? 44 : (mobile ? 38 : 48);
       const safePadding = mobile ? (compactMobile ? 10 : 14) : 22;
       const spawnBand = Math.min(mobile ? (compactMobile ? 26 : 40) : 88, width * (mobile ? (compactMobile ? 0.038 : 0.06) : 0.14));
 

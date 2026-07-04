@@ -1386,7 +1386,7 @@ html:not([data-theme="dark"]) .favorite-games-card {
 }
 .favorite-games-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 18px;
 }
 .favorite-game-item {
@@ -1416,9 +1416,14 @@ html:not([data-theme="dark"]) .favorite-games-card {
   background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.78));
   text-shadow: 0 2px 10px rgba(0,0,0,.35);
 }
+@media (max-width: 1200px) {
+  .favorite-games-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
 @media (max-width: 900px) {
   .favorite-games-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 @media (max-width: 680px) {
@@ -1427,6 +1432,7 @@ html:not([data-theme="dark"]) .favorite-games-card {
     border-radius: 24px;
   }
   .favorite-games-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
   .favorite-game-item {
@@ -6222,7 +6228,7 @@ html:not([data-theme="dark"]) .other-sites-card {
 }
 .physics-static-grid {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
 }
 .physics-static-item {
@@ -6257,7 +6263,7 @@ html:not([data-theme="dark"]) .other-sites-card {
 }
 @media (max-width: 1100px) {
   .physics-static-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 @media (max-width: 900px) {
@@ -6265,7 +6271,7 @@ html:not([data-theme="dark"]) .other-sites-card {
     align-items: flex-start !important;
   }
   .physics-static-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 @media (max-width: 680px) {
