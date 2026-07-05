@@ -6228,7 +6228,7 @@ html:not([data-theme="dark"]) .other-sites-card {
 }
 .physics-static-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 10px;
 }
 .physics-static-item {
@@ -6263,7 +6263,7 @@ html:not([data-theme="dark"]) .other-sites-card {
 }
 @media (max-width: 1100px) {
   .physics-static-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 @media (max-width: 900px) {
@@ -6326,3 +6326,7 @@ html:not([data-theme="dark"]) .other-sites-card {
     aspect-ratio: 2 / 3;
   }
 }
+
+
+/* v31 */
+.other-sites-head:empty { display:none; }
