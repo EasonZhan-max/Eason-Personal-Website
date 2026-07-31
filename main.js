@@ -2,12 +2,24 @@
   const root = document.documentElement;
   const $ = (selector, base = document) => base.querySelector(selector);
   const $$ = (selector, base = document) => Array.from(base.querySelectorAll(selector));
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lastFocusedBeforeModal = null;
+  const storage = {
+    get(key) {
+      try { return localStorage.getItem(key); } catch (error) { return null; }
+    },
+    set(key, value) {
+      try { localStorage.setItem(key, value); } catch (error) {}
+    },
+    remove(key) {
+      try { localStorage.removeItem(key); } catch (error) {}
+    }
+  };
 
   const CONFIG = {
     siteStartDate: '2026-06-04',
     typingTexts: [
       '今天也要向喜欢的未来靠近一点。',
-      '慢慢来，所有热爱都会发光。',
       '把普通日子过成自己的星河。',
       '奔赴星辰大海，不负心中热爱。'
     ]
@@ -20,12 +32,12 @@
   }
 
   const customState = {
-    hue: normalizeHue(localStorage.getItem('custom-hue') ?? 210),
-    bgMode: localStorage.getItem('custom-bg-mode') || 'default',
-    showHeroText: localStorage.getItem('custom-show-hero-text') !== '0',
-    showStars: localStorage.getItem('custom-show-stars') !== '0',
-    showMeteor: localStorage.getItem('custom-show-meteor') !== '0',
-    showDividerFx: localStorage.getItem('custom-show-divider-fx') !== '0'
+    hue: normalizeHue(storage.get('custom-hue') ?? 210),
+    bgMode: storage.get('custom-bg-mode') || 'default',
+    showHeroText: storage.get('custom-show-hero-text') !== '0',
+    showStars: storage.get('custom-show-stars') !== '0',
+    showMeteor: storage.get('custom-show-meteor') !== '0',
+    showDividerFx: storage.get('custom-show-divider-fx') !== '0'
   };
 
   function currentTheme() {
@@ -36,7 +48,13 @@
     const dark = currentTheme() === 'dark';
     const text = $('#themeText');
     const icon = $('#themeIcon');
+    const button = $('#themeBtn');
     if (text) text.textContent = dark ? '浅色' : '深色';
+    if (button) {
+      const label = dark ? '切换为浅色主题' : '切换为深色主题';
+      button.setAttribute('aria-label', label);
+      button.title = label;
+    }
     if (icon) icon.innerHTML = dark
       ? '<path d="M12 4v1.5M12 18.5V20M4 12h1.5M18.5 12H20M6.3 6.3l1 1M16.7 16.7l1 1M17.7 6.3l-1 1M7.3 16.7l-1 1"></path><circle cx="12" cy="12" r="4"></circle>'
       : '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>';
@@ -64,7 +82,7 @@
 
     $('#hueValue') && ($('#hueValue').textContent = displayHue);
     $('#hueSlider') && ($('#hueSlider').value = displayHue);
-    localStorage.setItem('custom-hue', String(displayHue));
+    storage.set('custom-hue', String(displayHue));
   }
 
   function applyBackgroundMode(mode) {
@@ -72,7 +90,7 @@
     root.classList.remove('bg-gradient', 'bg-night', 'bg-solid');
     if (safeMode !== 'default') root.classList.add(`bg-${safeMode}`);
     customState.bgMode = safeMode;
-    localStorage.setItem('custom-bg-mode', safeMode);
+    storage.set('custom-bg-mode', safeMode);
     $$('[data-bg-mode]').forEach((btn) => btn.classList.toggle('active', btn.dataset.bgMode === safeMode));
   }
 
@@ -91,23 +109,23 @@
     pairs.forEach(([id, key]) => {
       const input = $(`#${id}`);
       if (input) input.checked = customState[key];
-      localStorage.setItem(`custom-${key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}`, customState[key] ? '1' : '0');
+      storage.set(`custom-${key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}`, customState[key] ? '1' : '0');
     });
   }
 
   function initThemePalette() {
     // 默认进入网站强制深色，避免浏览器里旧的 light 缓存把页面变浅色。
     root.dataset.theme = 'dark';
-    try { localStorage.setItem('theme', 'dark'); } catch (error) {}
+    storage.set('theme', 'dark');
     updateThemeButton();
     applyAccentHue(customState.hue);
-    try { localStorage.removeItem('custom-show-mist'); } catch (error) {}
+    storage.remove('custom-show-mist');
     applyBackgroundMode(customState.bgMode);
     applyWallpaperSwitches();
     $('#themeBtn')?.addEventListener('click', () => {
       const next = currentTheme() === 'dark' ? 'light' : 'dark';
       root.dataset.theme = next;
-      localStorage.setItem('theme', next);
+      storage.set('theme', next);
       updateThemeButton();
       applyAccentHue(customState.hue);
     });
@@ -115,9 +133,9 @@
     $('#hueSlider')?.addEventListener('input', (event) => applyAccentHue(event.target.value));
     $$('[data-bg-mode]').forEach((btn) => btn.addEventListener('click', () => applyBackgroundMode(btn.dataset.bgMode)));
     $('#paletteResetBtn')?.addEventListener('click', () => {
-      localStorage.removeItem('custom-hue');
-      localStorage.removeItem('custom-bg-mode');
-      ['custom-show-hero-text', 'custom-show-stars', 'custom-show-meteor', 'custom-show-mist', 'custom-show-divider-fx'].forEach((key) => localStorage.removeItem(key));
+      storage.remove('custom-hue');
+      storage.remove('custom-bg-mode');
+      ['custom-show-hero-text', 'custom-show-stars', 'custom-show-meteor', 'custom-show-mist', 'custom-show-divider-fx'].forEach((key) => storage.remove(key));
       Object.assign(customState, { hue: 210, bgMode: 'default', showHeroText: true, showStars: true, showMeteor: true, showDividerFx: true });
       applyAccentHue(210);
       applyBackgroundMode('default');
@@ -137,9 +155,13 @@
   function openModal(target) {
     const modal = typeof target === 'string' ? $(target) : target;
     if (!modal) return;
+    lastFocusedBeforeModal = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     modal.classList.add('show');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('modal-open');
+    requestAnimationFrame(() => {
+      modal.querySelector('[data-close-modal], button, input, select, textarea, a[href]')?.focus();
+    });
   }
 
   function closeModal(modal) {
@@ -147,6 +169,8 @@
     modal.classList.remove('show');
     modal.setAttribute('aria-hidden', 'true');
     if (!$('.modal.show')) document.body.classList.remove('modal-open');
+    if (lastFocusedBeforeModal?.isConnected) lastFocusedBeforeModal.focus();
+    lastFocusedBeforeModal = null;
   }
 
   function initModal() {
@@ -156,12 +180,34 @@
     }));
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') $$('.modal.show').forEach(closeModal);
+      if (event.key !== 'Tab') return;
+      const modal = $('.modal.show');
+      if (!modal) return;
+      const focusable = $$('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])', modal)
+        .filter((element) => !element.hasAttribute('hidden') && element.getAttribute('aria-hidden') !== 'true');
+      if (!focusable.length) {
+        event.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     });
   }
 
   function initTyping() {
     const el = $('#typeText');
     if (!el) return;
+    if (prefersReducedMotion) {
+      el.textContent = CONFIG.typingTexts[0];
+      return;
+    }
     let textIndex = 0;
     let charIndex = 0;
     let deleting = false;
@@ -211,6 +257,10 @@
     const canvas = $('#starsCanvas');
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
+    if (prefersReducedMotion) {
+      canvas.hidden = true;
+      return;
+    }
     let stars = [];
     const resize = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -248,6 +298,10 @@
   function initMeteor() {
     const layer = $('#meteorLayer');
     if (!layer) return;
+    if (prefersReducedMotion) {
+      layer.hidden = true;
+      return;
+    }
     const spawn = () => {
       if (!root.classList.contains('custom-hide-meteor')) {
         const meteor = document.createElement('span');
@@ -266,20 +320,22 @@
   function initNavigation() {
     const backTop = $('#backTopBtn');
     const nav = $('#siteNav');
+    const hasHero = Boolean($('.hero'));
     const onScroll = () => {
       const top = window.scrollY || document.documentElement.scrollTop || 0;
       backTop?.classList.toggle('is-hidden', top < 220);
-      nav?.classList.toggle('nav-collapsed-top', top <= 90);
+      nav?.classList.toggle('nav-collapsed-top', hasHero && top <= 90);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
     backTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     onScroll();
 
-    $$('[data-scroll-target]').forEach((btn) => btn.addEventListener('click', () => {
+    $$('[data-scroll-target]').forEach((btn) => btn.addEventListener('click', (event) => {
       const target = $(btn.dataset.scrollTarget || '');
       if (!target) return;
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (btn.matches('a[href^="#"]')) event.preventDefault();
+      target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
     }));
 
     $$('a[href="#messageBox"]').forEach((link) => link.addEventListener('click', () => {
@@ -801,15 +857,25 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay = document.createElement('div');
     overlay.id = 'musicPlaylistOverlay';
     overlay.setAttribute('aria-hidden', 'true');
-    overlay.innerHTML = '<div id="musicPlaylistItems"></div>';
+    overlay.setAttribute('role', 'region');
+    overlay.setAttribute('aria-label', '播放列表');
+    overlay.innerHTML = `
+      <div class="music-playlist-head">
+        <strong>播放列表</strong>
+        <span id="musicPlaylistCount"></span>
+      </div>
+      <div id="musicPlaylistItems"></div>
+    `;
     document.body.appendChild(overlay);
   }
   const playlistItems = overlay.querySelector('#musicPlaylistItems');
 
   const songs = [
-    { title: '天平', artist: '银河系长 / Kumark / 漱一', src: 'audio/tianping.mp3', cover: 'images/music/tianping.jpg' },
-    { title: '一点', artist: 'Muyoi / Pezzi', src: 'audio/yidian.mp3', cover: 'images/music/yidian.jpg' }
+    { title: 'Rain with Cappuccino - Lofi Remix ft. KAY440', artist: 'Venvn / HANA / KAY440', src: 'audio/rain-with-cappuccino.mp3', cover: 'images/music/rain-with-cappuccino.jpg' },
+    { title: 'mure (Solo at Fluss)', artist: 'hideyuki hashimoto', src: 'audio/mure-solo-at-fluss.flac', cover: 'images/music/mure-solo-at-fluss.jpg' }
   ];
+  const playlistCount = overlay.querySelector('#musicPlaylistCount');
+  if (playlistCount) playlistCount.textContent = `${songs.length} 首`;
 
   const icons = {
     prev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6L3 12l8 6V6Zm2 0h2v12h-2V6Z"></path></svg>',
@@ -817,8 +883,8 @@ document.addEventListener('DOMContentLoaded', () => {
     pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7V5Zm6 0h4v14h-4V5Z"></path></svg>',
     next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 6 8 6-8 6V6Zm-2 0H9v12h2V6Z"></path></svg>',
     list: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14v2H5V6Zm0 5h14v2H5v-2Zm0 5h14v2H5v-2Z"></path></svg>',
-    listMode: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 17H7l2.5 2.5-1.4 1.4L3.2 16l4.9-4.9 1.4 1.4L7 15h10V17Zm0-8H7V7h10l-2.5-2.5 1.4-1.4 4.9 4.9-4.9 4.9-1.4-1.4L17 9Z"></path></svg>',
-    singleMode: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 17H7l2.5 2.5-1.4 1.4L3.2 16l4.9-4.9 1.4 1.4L7 15h10V17Zm0-8H7V7h10l-2.5-2.5 1.4-1.4 4.9 4.9-4.9 4.9-1.4-1.4L17 9Z"></path><text x="16.2" y="11.5" text-anchor="middle" font-size="7.5" font-family="Arial, sans-serif" fill="currentColor" stroke="none">1</text></svg>'
+    listMode: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5 20.5 7 17 10.5"></path><path d="M3.5 11V9.7A2.7 2.7 0 0 1 6.2 7H20"></path><path d="M7 20.5 3.5 17 7 13.5"></path><path d="M20.5 13v1.3a2.7 2.7 0 0 1-2.7 2.7H4"></path></svg>',
+    singleMode: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.4 7.4A7.2 7.2 0 1 1 5.1 16.9"></path><path d="M6.4 3.8v3.6H2.9"></path></svg>'
   };
 
   let current = 0;
@@ -848,6 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modeBtn.innerHTML = mode === 'list' ? icons.listMode : icons.singleMode;
     modeBtn.dataset.loopMode = mode;
     modeBtn.setAttribute('aria-label', mode === 'list' ? '列表循环' : '单曲循环');
+    modeBtn.setAttribute('aria-pressed', mode === 'single' ? 'true' : 'false');
     modeBtn.title = mode === 'list' ? '列表循环' : '单曲循环';
 
     playBtn.innerHTML = audio.paused ? icons.play : icons.pause;
@@ -857,8 +924,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const renderList = () => {
     playlistItems.innerHTML = songs.map((song, index) => `
-      <button type="button" class="${index === current ? 'is-active' : ''}" data-index="${index}">
-        <img src="${song.cover}" alt="${song.title} 专辑封面" loading="lazy" />
+      <button type="button" class="${index === current ? 'is-active' : ''}" data-index="${index}" title="${song.title} — ${song.artist}">
+        <img src="${song.cover}" alt="${song.title} 专辑封面" loading="lazy" decoding="async" />
         <span class="music-list-text">
           <strong>${index + 1}. ${song.title}</strong>
           <span>${song.artist}</span>
@@ -880,48 +947,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const positionPlaylist = () => {
     if (!overlay.classList.contains('is-open')) return;
-    const toggleRect = listToggle.getBoundingClientRect();
     const panelRect = panel.getBoundingClientRect();
-    const width = Math.min(window.innerWidth - 24, window.innerWidth <= 768 ? 320 : 380);
-    const rowHeight = 72;
-    const wantedHeight = songs.length * rowHeight + 20;
-    const height = Math.min(Math.max(110, wantedHeight), window.innerWidth <= 768 ? 260 : 320);
+    const compact = window.innerWidth <= 768;
+    const margin = compact ? 8 : 12;
+    const gap = 10;
+    const width = Math.min(window.innerWidth - margin * 2, panelRect.width);
+    const maxHeight = Math.min(compact ? 300 : 340, window.innerHeight - margin * 2);
+    const estimatedHeight = Math.min(maxHeight, 58 + songs.length * 70);
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
 
-    let left = panelRect.left + (panelRect.width / 2) - (width / 2);
-    left = Math.max(12, Math.min(left, window.innerWidth - width - 12));
+    const left = panelRect.left + (panelRect.width - width) / 2;
+    const roomBelow = window.innerHeight - panelRect.bottom - gap - margin;
+    const roomAbove = panelRect.top - gap - margin;
+    const placeAbove = roomBelow < estimatedHeight && roomAbove > roomBelow;
+    const placement = placeAbove ? 'above' : 'below';
+    let top = placeAbove
+      ? panelRect.top - estimatedHeight - gap
+      : panelRect.bottom + gap;
 
-    let top = toggleRect.bottom + 12;
-    if (top + height > window.innerHeight - 12) {
-      top = toggleRect.top - height - 12;
-    }
-    top = Math.max(12, top);
+    top = clamp(top, margin, window.innerHeight - estimatedHeight - margin);
 
-    overlay.style.left = `${left}px`;
-    overlay.style.top = `${top}px`;
-    overlay.style.width = `${width}px`;
-    overlay.style.maxHeight = `${height}px`;
-    playlistItems.style.maxHeight = `${height - 20}px`;
+    overlay.dataset.placement = placement;
+    overlay.style.setProperty('left', `${clamp(left, margin, window.innerWidth - width - margin)}px`, 'important');
+    overlay.style.setProperty('top', `${top}px`, 'important');
+    overlay.style.setProperty('width', `${width}px`, 'important');
+    overlay.style.setProperty('max-height', `${maxHeight}px`, 'important');
+    playlistItems.style.setProperty('max-height', `${Math.max(100, maxHeight - 56)}px`, 'important');
   };
 
   const closeList = () => {
     overlay.classList.remove('is-open');
     overlay.setAttribute('aria-hidden', 'true');
+    listToggle.setAttribute('aria-expanded', 'false');
   };
   const openList = () => {
     renderList();
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
+    listToggle.setAttribute('aria-expanded', 'true');
     positionPlaylist();
     requestAnimationFrame(positionPlaylist);
   };
   const closePanel = () => {
     panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
+    toggleBtn.setAttribute('aria-expanded', 'false');
     closeList();
   };
   const openPanel = () => {
     panel.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
+    toggleBtn.setAttribute('aria-expanded', 'true');
     requestAnimationFrame(positionPlaylist);
   };
 
@@ -932,6 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
     audio.load();
     cover.src = song.cover;
     title.textContent = song.title;
+    title.title = song.title;
     artist.textContent = song.artist;
     currentEl.textContent = '0:00';
     durationEl.textContent = '0:00';
@@ -952,7 +1029,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (panel.classList.contains('is-open')) closePanel();
     else openPanel();
   });
-  closeBtn.addEventListener('click', closePanel);
+  closeBtn.addEventListener('click', () => {
+    closePanel();
+    toggleBtn.focus();
+  });
 
   playBtn.addEventListener('click', togglePlay);
   prevBtn.addEventListener('click', () => loadSong(current - 1, !audio.paused));
@@ -960,6 +1040,10 @@ document.addEventListener('DOMContentLoaded', () => {
   modeBtn.addEventListener('click', () => {
     mode = mode === 'list' ? 'single' : 'list';
     setButtonLabels();
+    modeBtn.classList.remove('is-switching');
+    void modeBtn.offsetWidth;
+    modeBtn.classList.add('is-switching');
+    window.setTimeout(() => modeBtn.classList.remove('is-switching'), 240);
   });
   listToggle.addEventListener('click', (event) => {
     event.preventDefault();
@@ -1024,6 +1108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderList();
   loadSong(0, false);
+  toggleBtn.setAttribute('aria-expanded', 'false');
 });
 
 
@@ -1034,7 +1119,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (brandLink && aboutSection) {
     brandLink.addEventListener('click', (event) => {
       event.preventDefault();
-      aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      aboutSection.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     });
   }
 
@@ -1083,5 +1168,3 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', requestHeroState, { passive: true });
   }
 });
-
-
