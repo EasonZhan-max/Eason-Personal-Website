@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>留言箱 - Eason的小站</title>
   <meta name="description" content="Eason的小站留言箱，欢迎留下你的足迹。" />
+  <link rel="canonical" href="https://me.easonzhan.xyz/message.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:title" content="留言箱 - Eason的小站" />
+  <meta property="og:description" content="Eason的小站留言箱，欢迎留下你的足迹。" />
+  <meta property="og:url" content="https://me.easonzhan.xyz/message.html" />
+  <meta name="theme-color" content="#08131f" />
   <link rel="icon" type="image/avif" href="https://user14491.cn.imgto.link/public/20260619/50674c2c-6018-44b8-94d8-22f28f5fdd0a.avif" />
   <link rel="apple-touch-icon" href="https://user14491.cn.imgto.link/public/20260619/50674c2c-6018-44b8-94d8-22f28f5fdd0a.avif" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.css" />
-  <link rel="stylesheet" href="style.css?v=20260621-intro-flat" />
+  <script>document.documentElement.dataset.theme="dark";try{localStorage.setItem("theme","dark")}catch(e){}</script>
+  <link rel="stylesheet" href="style.css?v=20260731-final-review" />
   <link rel="alternate" type="application/rss+xml" title="Eason的小站 RSS" href="rss.xml" />
 </head>
 <body>
@@ -22,7 +30,7 @@
     </a>
     <nav class="nav-links" aria-label="主导航">
       <a href="index.html#home">主页</a>
-      <a href="index.html#intro">网站介绍</a>
+      <a href="index.html#messageBox">网站介绍</a>
       <a href="index.html#aboutMe">关于我</a>
       <a href="index.html#contact">联系方式</a>
       <a href="message.html">留言箱</a>
@@ -63,19 +71,19 @@
   <footer class="site-footer message-site-footer" id="messageFooter">
     <p class="footer-nav-links">© 2026 Eason. All Rights Reserved. / <a href="rss.xml" target="_blank" rel="noopener noreferrer">RSS</a> / <a href="sitemap.xml" target="_blank" rel="noopener noreferrer">Sitemap</a></p>
     <p class="icp-link-wrap"><a class="icp-link" href="https://icp.gov.moe/?keyword=20260809" target="_blank" rel="noopener noreferrer"><img class="icp-icon" src="images/moe-icp.png" alt="萌 ICP 图标" />萌ICP备20260809号</a></p>
-    <p class="upyun-link-wrap">本站由 <a class="upyun-link" href="https://www.upyun.com" target="_blank" rel="noopener noreferrer" aria-label="又拍云官网"><img class="upyun-logo" src="images/upyun-logo.png" alt="又拍云" /></a> 提供图片加速服务</p>
+    <p class="upyun-link-wrap">本站由 <a class="upyun-link" href="https://www.upyun.com" target="_blank" rel="noopener noreferrer">又拍云</a> 提供图片加速服务</p>
   </footer>
 
   <div class="modal" id="paletteModal" aria-hidden="true">
-    <div class="modal-card palette-modal-card" role="dialog" aria-modal="true">
+    <div class="modal-card palette-modal-card" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
       <button class="modal-close" type="button" data-close-modal aria-label="关闭">×</button>
-      <div class="palette-head"><h2>个性化调色板</h2><button class="palette-reset" id="paletteResetBtn" type="button">重置</button></div>
-      <div class="palette-section"><div class="palette-section-title"><span>主题色相</span><b id="hueValue">210</b></div><input class="hue-slider" id="hueSlider" type="range" min="0" max="360" value="210" /></div>
+      <div class="palette-head"><h2 id="paletteTitle">个性化调色板</h2><button class="palette-reset" id="paletteResetBtn" type="button">重置</button></div>
+      <div class="palette-section"><div class="palette-section-title"><span>主题色相</span><b id="hueValue">210</b></div><input class="hue-slider" id="hueSlider" type="range" min="0" max="360" value="210" aria-label="主题色相" /></div>
       <div class="palette-section"><div class="palette-section-title"><span>壁纸设置</span></div><div class="toggle-grid"><label class="toggle-item"><span><strong>背景星星</strong><small>控制背景星点闪烁显示效果</small></span><input id="toggleStars" type="checkbox" checked /></label><label class="toggle-item"><span><strong>雾光渐变</strong><small>控制雾蓝柔光背景层显示</small></span><input id="toggleMist" type="checkbox" checked /></label></div></div>
     </div>
   </div>
   <button class="backtop is-hidden" id="backTopBtn" type="button" aria-label="返回顶部">↑</button>
-  <script src="main.js?v=20260621-intro-flat"></script>
+  <script src="main.js?v=20260731-final-review"></script>
   <script type="module">
     const WALINE_SERVER_URL = 'https://example.easonzhan.xyz';
     const tip = document.getElementById('walineConfigTip');
