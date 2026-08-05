@@ -41,7 +41,6 @@ a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
 #starsCanvas { position: fixed; inset: 0; z-index: -3; pointer-events: none; }
 .mist-bg { position: fixed; inset: 0; z-index: -2; pointer-events: none; background: linear-gradient(135deg, rgba(255,255,255,.2), rgba(159,185,201,.08)); }
-html.custom-hide-stars #starsCanvas, html.custom-hide-mist .mist-bg { display: none; }
 .site-nav {
   position: sticky;
   top: 14px;
@@ -62,7 +61,7 @@ html.custom-hide-stars #starsCanvas, html.custom-hide-mist .mist-bg { display: n
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; }
 .brand img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
 .nav-links { display: flex; align-items: center; gap: 8px; }
-.nav-links a, .icon-btn, .primary-link, .ghost-link, .message-btn, .palette-reset {
+.nav-links a, .icon-btn, .primary-link, .ghost-link, .message-btn {
   border: 1px solid var(--line);
   background: rgba(255,255,255,.38);
   color: var(--text);
@@ -71,8 +70,8 @@ html.custom-hide-stars #starsCanvas, html.custom-hide-mist .mist-bg { display: n
   cursor: pointer;
   transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
 }
-html[data-theme="dark"] .nav-links a, html[data-theme="dark"] .icon-btn, html[data-theme="dark"] .primary-link, html[data-theme="dark"] .ghost-link, html[data-theme="dark"] .message-btn, html[data-theme="dark"] .palette-reset { background: rgba(255,255,255,.06); }
-.nav-links a:hover, .icon-btn:hover, .primary-link:hover, .ghost-link:hover, .message-btn:hover, .palette-reset:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.12); }
+html[data-theme="dark"] .nav-links a, html[data-theme="dark"] .icon-btn, html[data-theme="dark"] .primary-link, html[data-theme="dark"] .ghost-link, html[data-theme="dark"] .message-btn { background: rgba(255,255,255,.06); }
+.nav-links a:hover, .icon-btn:hover, .primary-link:hover, .ghost-link:hover, .message-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.12); }
 .nav-actions { display: flex; gap: 8px; align-items: center; }
 .icon-btn { display: inline-flex; align-items: center; gap: 6px; }
 .icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -134,16 +133,6 @@ html[data-theme="dark"] .contact-link { background: rgba(255,255,255,.05); }
 .icp-icon, .upyun-logo { height: 18px; vertical-align: middle; margin-right: 6px; }
 .backtop { position: fixed; right: 18px; bottom: 18px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--card-solid); color: var(--text); box-shadow: var(--shadow); cursor: pointer; }
 .backtop.is-hidden { opacity: 0; pointer-events: none; transform: translateY(10px); }
-.modal { position: fixed; inset: 0; display: none; place-items: center; padding: 18px; background: rgba(0,0,0,.38); z-index: 80; }
-.modal.show { display: grid; }
-.modal-card { position: relative; width: min(520px, 100%); border: 1px solid var(--line); border-radius: 26px; background: var(--card-solid); box-shadow: var(--shadow); padding: 24px; }
-.modal-close { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer; }
-.palette-section { margin-top: 16px; }
-.palette-section-title { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--muted); }
-.hue-slider { width: 100%; }
-.toggle-grid { display: grid; gap: 12px; }
-.toggle-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 16px; }
-.toggle-item small { display: block; color: var(--muted); }
 .message-page { padding-top: 48px; }
 .message-layout { max-width: 860px; margin: 0 auto; display: grid; gap: 18px; }
 .message-return-row { margin-bottom: 12px; }
@@ -301,16 +290,11 @@ html[data-theme="dark"] .contact-link { background: rgba(255,255,255,.05); }
 }
 
 
-/* 20260621：恢复旧版调色板功能与壁纸开关 */
+/* 20260621：流星与分隔装饰 */
 .meteor-layer { position: fixed; inset: 0; z-index: 999; pointer-events: none; overflow: hidden; }
 .meteor { position: absolute; width: 180px; height: 2px; border-radius: 999px; background: linear-gradient(90deg, rgba(235,248,255,.95), rgba(204,231,246,.35), transparent); transform: rotate(-28deg); opacity: 0; filter: drop-shadow(0 0 7px rgba(190,228,247,.35)); }
 .meteor.fly { animation: meteorFly linear forwards; }
 @keyframes meteorFly { 0% { opacity: 0; transform: translate3d(0,0,0) rotate(-28deg); } 12% { opacity: .9; } 100% { opacity: 0; transform: translate3d(-42vw,42vh,0) rotate(-28deg); } }
-html.custom-hide-meteor .meteor-layer,
-html.custom-hide-stars #starsCanvas,
-html.custom-hide-mist .mist-bg { display: none !important; }
-html.bg-night body { background: #040912 !important; }
-html.custom-hide-hero-text .hero-text { display: none !important; }
 
 .hero-divider {
   position: relative;
@@ -349,30 +333,6 @@ html.custom-hide-hero-text .hero-text { display: none !important; }
 @keyframes dividerPulse { 50% { opacity: .42; transform: translate(-50%,-50%) scaleX(1.1); } }
 @keyframes dividerRing { 50% { transform: scale(1.35); opacity: .22; } }
 @keyframes sparkFloat { 50% { transform: translateY(-8px); opacity: .5; } }
-html.custom-hide-divider-fx .divider-glow,
-html.custom-hide-divider-fx .divider-center,
-html.custom-hide-divider-fx .divider-spark { display: none !important; }
-html.custom-hide-divider-fx .hero-divider { height: 30px; margin-top: -8px; }
-
-.palette-modal-card { width: min(500px, 92vw); padding: 16px; }
-.palette-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; padding-right: 50px; }
-.palette-head h2 { margin: 0; font-size: 24px; white-space: nowrap; word-break: keep-all; }
-.palette-reset { height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(159,185,201,.14); color: var(--text); font-weight: 900; cursor: pointer; }
-.palette-section { margin-top: 9px; padding: 11px; border: 1px solid var(--line); border-radius: 16px; background: rgba(159,185,201,.10); }
-.palette-section-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 9px; font-size: 18px; font-weight: 900; color: var(--text); }
-.palette-section-title::before { content: ""; width: 4px; height: 18px; border-radius: 8px; background: linear-gradient(var(--pink),var(--mist)); }
-.palette-section-title span { margin-right: auto; }
-.palette-section-title b { min-width: 46px; height: 32px; display: grid; place-items: center; border-radius: 12px; background: rgba(159,185,201,.18); }
-.hue-slider { width: 100%; appearance: none; height: 12px; border-radius: 999px; background: linear-gradient(90deg,#f3a5b1,#e8c47d,#9ad0a1,#7ed3d8,#8fb4f0,#c7a1e6,#f3a5b1); }
-.hue-slider::-webkit-slider-thumb { appearance: none; width: 16px; height: 26px; border-radius: 8px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.24); cursor: pointer; }
-.preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.preset-btn { border: 1px solid var(--line); border-radius: 14px; background: rgba(159,185,201,.12); color: var(--text); padding: 9px 11px; font-weight: 900; cursor: pointer; }
-.preset-btn.active { background: linear-gradient(135deg, var(--mist), var(--pink)); color: #fff; border-color: transparent; }
-.toggle-grid { display: grid; gap: 8px; }
-.toggle-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 11px; border-radius: 14px; background: rgba(159,185,201,.12); cursor: pointer; border: 0; }
-.toggle-item span { display: grid; gap: 3px; }
-.toggle-item small { color: var(--muted); font-weight: 700; font-size: 12px; }
-.toggle-item input { width: 44px; height: 24px; accent-color: var(--mist); }
 
 
 /* 20260621 fix3: hero centered, remove intro section feeling, restore old centered title */
@@ -636,8 +596,7 @@ main#top {
 .icon-btn,
 .primary-link,
 .ghost-link,
-.message-btn,
-.palette-reset {
+.message-btn {
   border-radius: 18px !important;
 }
 .brand img,
@@ -1538,7 +1497,7 @@ html[data-theme="dark"] .favorite-games-card {
 }
 
 
-/* 20260622 palette-v2: 调色板影响更多组件 + 修复拉满回 0 后的视觉联动 */
+/* 20260622: 全站强调色视觉联动 */
 :root {
   --accent: var(--mist);
   --accent-2: var(--mist-2);
@@ -1556,7 +1515,6 @@ html[data-theme="dark"] .favorite-games-card {
 .favorite-games-card,
 .contact-link,
 .footer-stat,
-.modal-card,
 .physics-stage,
 .favorite-game-item {
   border-color: var(--accent-border) !important;
@@ -1568,16 +1526,12 @@ html[data-theme="dark"] .favorite-games-card {
 }
 .icon-btn,
 .quick-about-btn,
-.palette-reset,
-.preset-btn,
 .backtop {
   border-color: var(--accent-border) !important;
   background: color-mix(in srgb, var(--card-solid) 72%, var(--accent-soft)) !important;
 }
 html[data-theme="dark"] .icon-btn,
 html[data-theme="dark"] .quick-about-btn,
-html[data-theme="dark"] .palette-reset,
-html[data-theme="dark"] .preset-btn,
 html[data-theme="dark"] .backtop {
   background: color-mix(in srgb, var(--card-solid) 70%, var(--accent-faint)) !important;
 }
@@ -1627,27 +1581,6 @@ html[data-theme="dark"] .backtop {
 }
 .favorite-game-item strong {
   background: linear-gradient(180deg, rgba(0,0,0,0), color-mix(in srgb, #000 76%, var(--accent) 24%)) !important;
-}
-.palette-section,
-.toggle-item {
-  border-color: var(--accent-border) !important;
-  background: color-mix(in srgb, var(--card) 78%, var(--accent-faint)) !important;
-}
-.palette-section-title::before,
-.preset-btn.active {
-  background: linear-gradient(135deg, var(--accent), var(--accent-3)) !important;
-}
-.palette-section-title b {
-  background: var(--accent-soft) !important;
-  color: var(--text) !important;
-}
-.hue-slider::-webkit-slider-thumb {
-  border: 2px solid var(--accent) !important;
-  box-shadow: 0 4px 14px var(--accent-glow) !important;
-}
-.hue-slider::-moz-range-thumb {
-  border: 2px solid var(--accent) !important;
-  box-shadow: 0 4px 14px var(--accent-glow) !important;
 }
 ::selection {
   background: var(--accent-soft);
@@ -2258,41 +2191,6 @@ body {
 }
 
 
-/* 20260624 safe palette fix from v3: 只修调色板，不改顶部栏布局 */
-.palette-modal,
-#paletteModal {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 100000 !important;
-}
-
-.palette-modal[aria-hidden="true"],
-#paletteModal[aria-hidden="true"] {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-.palette-modal[aria-hidden="false"],
-#paletteModal[aria-hidden="false"] {
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-}
-
-.palette-panel,
-.palette-modal-card,
-#palettePanel {
-  position: relative !important;
-  z-index: 100001 !important;
-  pointer-events: auto !important;
-}
-
-#paletteBtn,
-.palette-open-btn {
-  pointer-events: auto !important;
-}
-
 /* 星星/雾层只做背景，不挡按钮 */
 #starsCanvas,
 .mist-bg,
@@ -2329,8 +2227,7 @@ body {
 main,
 .site-footer,
 #backTopBtn,
-.backtop,
-.modal {
+.backtop {
   position: relative;
   z-index: 2;
 }
@@ -2870,7 +2767,7 @@ html[data-theme="dark"] .mist-bg {
 }
 
 
-/* 20260624 user final fix: compact player, transparent cards, palette animation, mobile physics */
+/* 20260624 user final fix: compact player, transparent cards, mobile physics */
 html[data-theme="dark"] .site-nav,
 html[data-theme="dark"] .hero-card,
 html[data-theme="dark"] .about-avatar-card,
@@ -2880,9 +2777,7 @@ html[data-theme="dark"] .favorite-games-card,
 html[data-theme="dark"] .message-comment-card,
 html[data-theme="dark"] .contact-link,
 html[data-theme="dark"] .site-footer,
-html[data-theme="dark"] .music-panel,
-html[data-theme="dark"] .palette-modal-card,
-html[data-theme="dark"] .modal-card {
+html[data-theme="dark"] .music-panel {
   background: color-mix(in srgb, var(--card-solid) 72%, transparent) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
@@ -2893,28 +2788,6 @@ html[data-theme="dark"] .profile-card,
 html[data-theme="dark"] .about-avatar-card,
 html[data-theme="dark"] .contact-link {
   background: color-mix(in srgb, var(--card) 66%, transparent) !important;
-}
-
-/* 调色板开关动画 */
-.modal,
-#paletteModal {
-  transition: opacity .26s ease, visibility .26s ease !important;
-}
-.modal-card,
-.palette-modal-card {
-  transition: transform .26s ease, opacity .26s ease, box-shadow .26s ease !important;
-  transform: translateY(18px) scale(.97);
-  opacity: 0;
-}
-.modal[aria-hidden="false"] .modal-card,
-#paletteModal[aria-hidden="false"] .palette-modal-card {
-  transform: translateY(0) scale(1);
-  opacity: 1;
-}
-.modal[aria-hidden="true"] .modal-card,
-#paletteModal[aria-hidden="true"] .palette-modal-card {
-  transform: translateY(18px) scale(.97);
-  opacity: 0;
 }
 
 /* 紧凑音乐播放器 */
@@ -3148,9 +3021,7 @@ html[data-theme="dark"] .favorite-game-item,
 html[data-theme="dark"] .message-comment-card,
 html[data-theme="dark"] .contact-link,
 html[data-theme="dark"] .site-footer,
-html[data-theme="dark"] .music-panel,
-html[data-theme="dark"] .modal-card,
-html[data-theme="dark"] .palette-modal-card {
+html[data-theme="dark"] .music-panel {
   background: rgba(8, 20, 35, 0.38) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
@@ -3371,9 +3242,7 @@ html[data-theme="dark"] .favorite-game-item,
 html[data-theme="dark"] .message-comment-card,
 html[data-theme="dark"] .contact-link,
 html[data-theme="dark"] .site-footer,
-html[data-theme="dark"] .music-panel,
-html[data-theme="dark"] .modal-card,
-html[data-theme="dark"] .palette-modal-card {
+html[data-theme="dark"] .music-panel {
   background: rgba(6, 18, 30, 0.26) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
@@ -3404,7 +3273,6 @@ html[data-theme="dark"] .contact-link {
 main,
 .site-footer,
 .music-panel,
-.modal,
 .backtop {
   position: relative;
   z-index: 10;
@@ -4531,7 +4399,6 @@ main,
 .site-nav,
 main,
 .site-footer,
-.modal,
 .backtop {
   position: relative !important;
   z-index: 20 !important;
@@ -7046,9 +6913,8 @@ html:not([data-theme="dark"]) #musicPlaylistOverlay {
 }
 
 
-/* 20260731: centered close icons + palette enter/exit motion */
-#musicPanel .music-close,
-#paletteModal .modal-close {
+/* 20260731: centered music close icon */
+#musicPanel .music-close {
   display: grid !important;
   place-items: center !important;
   padding: 0 !important;
@@ -7058,8 +6924,7 @@ html:not([data-theme="dark"]) #musicPlaylistOverlay {
   text-align: center !important;
 }
 
-#musicPanel .music-close::before,
-#paletteModal .modal-close::before {
+#musicPanel .music-close::before {
   content: "×" !important;
   position: absolute !important;
   inset: 0 !important;
@@ -7073,78 +6938,6 @@ html:not([data-theme="dark"]) #musicPlaylistOverlay {
   line-height: 1 !important;
   text-align: center !important;
   pointer-events: none !important;
-}
-
-#paletteModal .modal-close {
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 11px !important;
-  background: rgba(225, 239, 249, .08) !important;
-  transition: transform .18s ease, background .18s ease, border-color .18s ease !important;
-}
-
-#paletteModal .modal-close:hover {
-  transform: rotate(5deg) scale(1.04) !important;
-  border-color: color-mix(in srgb, var(--accent) 38%, var(--line)) !important;
-  background: color-mix(in srgb, var(--accent-soft) 70%, rgba(225,239,249,.08)) !important;
-}
-
-#paletteModal.modal {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 100000 !important;
-  display: grid !important;
-  place-items: center !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  background: rgba(1, 8, 15, .52) !important;
-  backdrop-filter: blur(0) !important;
-  -webkit-backdrop-filter: blur(0) !important;
-  transition:
-    opacity .22s ease,
-    visibility 0s linear .22s,
-    backdrop-filter .22s ease,
-    -webkit-backdrop-filter .22s ease !important;
-}
-
-#paletteModal.modal.show,
-#paletteModal.modal[aria-hidden="false"] {
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-  backdrop-filter: blur(7px) !important;
-  -webkit-backdrop-filter: blur(7px) !important;
-  transition-delay: 0s !important;
-}
-
-#paletteModal .palette-modal-card {
-  opacity: 0 !important;
-  transform: translateY(16px) scale(.955) !important;
-  transform-origin: center !important;
-  will-change: transform, opacity !important;
-  transition:
-    opacity .22s ease,
-    transform .24s cubic-bezier(.2, .78, .25, 1),
-    box-shadow .22s ease !important;
-}
-
-#paletteModal.show .palette-modal-card,
-#paletteModal[aria-hidden="false"] .palette-modal-card {
-  opacity: 1 !important;
-  transform: translateY(0) scale(1) !important;
-}
-
-#paletteModal[aria-hidden="true"] .palette-modal-card {
-  opacity: 0 !important;
-  transform: translateY(12px) scale(.97) !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #paletteModal.modal,
-  #paletteModal .palette-modal-card {
-    transition-duration: .01ms !important;
-  }
 }
 
 /* 20260731 final review: anchor clearance, keyboard focus, reduced motion */

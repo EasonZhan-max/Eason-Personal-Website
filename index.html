@@ -22,7 +22,7 @@
   <meta name="apple-mobile-web-app-title" content="Eason的小站" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.css" />
   <script>document.documentElement.dataset.theme="dark";try{localStorage.setItem("theme","dark")}catch(e){}</script>
-  <link rel="stylesheet" href="style.css?v=20260731-final-review" />
+  <link rel="stylesheet" href="style.css?v=20260805-nav-cleanup" />
   <link rel="alternate" type="application/rss+xml" title="Eason的小站 RSS" href="rss.xml" />
 </head>
 <body>
@@ -44,10 +44,6 @@
       <span>音乐</span>
     </button>
 
-      <button class="icon-btn" id="paletteBtn" type="button" title="个性化调色板">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18h1.3a2.2 2.2 0 0 0 1.7-3.6l-.3-.4a1.8 1.8 0 0 1 1.4-3h1.5A4.4 4.4 0 0 0 22 9.6 6.6 6.6 0 0 0 15.4 3H12z"></path><circle cx="7.5" cy="10" r="1"></circle><circle cx="10.5" cy="7.5" r="1"></circle><circle cx="14.5" cy="7.5" r="1"></circle><circle cx="16.5" cy="11" r="1"></circle></svg>
-        <span>调色</span>
-      </button>
       <button class="icon-btn" id="themeBtn" type="button" title="深色/浅色切换">
         <svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg>
         <span id="themeText">主题</span>
@@ -112,7 +108,7 @@
       </section>
       <section class="profile-card about-text-card">
                 <p>你好，我是Eason，一名高中生，欢迎加我的VRChat好友，来找我玩。</p>
-                <p class="visitor-thanks">感谢你访问我的网站<br />你是本站第<span id="busuanzi_value_site_uv">加载中</span>个访客</p>
+                <p class="visitor-thanks">感谢你的访问。<br />你是本站第<span id="busuanzi_value_site_uv">加载中</span>个访客</p>
         <button class="icon-btn about-contact-btn" type="button" data-scroll-target="#contact">我的联系方式</button>
       </section>
     </section>
@@ -224,17 +220,8 @@
     <p class="icp-link-wrap"><a class="icp-link" href="https://icp.gov.moe/?keyword=20260809" target="_blank" rel="noopener noreferrer"><img class="icp-icon" src="images/moe-icp.png" alt="萌 ICP 图标" />萌ICP备20260809号</a></p>
 </footer>
 
-  <div class="modal" id="paletteModal" aria-hidden="true">
-    <div class="modal-card palette-modal-card" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
-      <button class="modal-close" type="button" data-close-modal aria-label="关闭">×</button>
-      <div class="palette-head"><h2 id="paletteTitle">个性化调色板</h2><button class="palette-reset" id="paletteResetBtn" type="button">重置</button></div>
-      <div class="palette-section"><div class="palette-section-title"><span>主题色相</span><b id="hueValue">210</b></div><input class="hue-slider" id="hueSlider" type="range" min="0" max="360" value="210" aria-label="主题色相" /></div>
-      <div class="palette-section"><div class="palette-section-title"><span>背景模式</span></div><div class="preset-grid"><button class="preset-btn active" type="button" data-bg-mode="default">雾蓝默认</button><button class="preset-btn" type="button" data-bg-mode="night">深夜星空</button></div></div>
-      <div class="palette-section"><div class="palette-section-title"><span>壁纸设置</span></div><div class="toggle-grid"><label class="toggle-item"><span><strong>首页壁纸标题</strong><small>控制首页标题和文案显示</small></span><input id="toggleHeroText" type="checkbox" checked /></label><label class="toggle-item"><span><strong>背景星星</strong><small>控制背景星点闪烁显示效果</small></span><input id="toggleStars" type="checkbox" checked /></label><label class="toggle-item"><span><strong>流星动画</strong><small>控制背景随机流星划过效果</small></span><input id="toggleMeteor" type="checkbox" checked /></label></div></div>
-    </div>
-  </div>
   <button class="backtop is-hidden" id="backTopBtn" type="button" aria-label="返回顶部">↑</button>
-  <script src="main.js?v=20260731-final-review"></script>
+  <script src="main.js?v=20260805-nav-cleanup"></script>
 
   <script type="module">
     const WALINE_SERVER_URL = 'https://example.easonzhan.xyz';
