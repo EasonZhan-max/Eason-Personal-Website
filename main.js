@@ -3,18 +3,6 @@
   const $ = (selector, base = document) => base.querySelector(selector);
   const $$ = (selector, base = document) => Array.from(base.querySelectorAll(selector));
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let lastFocusedBeforeModal = null;
-  const storage = {
-    get(key) {
-      try { return localStorage.getItem(key); } catch (error) { return null; }
-    },
-    set(key, value) {
-      try { localStorage.setItem(key, value); } catch (error) {}
-    },
-    remove(key) {
-      try { localStorage.removeItem(key); } catch (error) {}
-    }
-  };
 
   const CONFIG = {
     siteStartDate: '2026-06-04',
@@ -23,21 +11,6 @@
       '把普通日子过成自己的星河。',
       '奔赴星辰大海，不负心中热爱。'
     ]
-  };
-
-  function normalizeHue(value, fallback = 210) {
-    const num = Number(value);
-    if (!Number.isFinite(num)) return fallback;
-    return Math.min(360, Math.max(0, Math.round(num)));
-  }
-
-  const customState = {
-    hue: normalizeHue(storage.get('custom-hue') ?? 210),
-    bgMode: storage.get('custom-bg-mode') || 'default',
-    showHeroText: storage.get('custom-show-hero-text') !== '0',
-    showStars: storage.get('custom-show-stars') !== '0',
-    showMeteor: storage.get('custom-show-meteor') !== '0',
-    showDividerFx: storage.get('custom-show-divider-fx') !== '0'
   };
 
   function currentTheme() {
@@ -60,144 +33,16 @@
       : '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>';
   }
 
-  function applyAccentHue(hueValue) {
-    const displayHue = normalizeHue(hueValue, customState.hue || 210);
-    const cssHue = displayHue === 360 ? 0 : displayHue;
-    const dark = currentTheme() === 'dark';
-    customState.hue = displayHue;
-
-    root.style.setProperty('--mist', dark ? `hsl(${cssHue} 46% 66%)` : `hsl(${cssHue} 44% 74%)`);
-    root.style.setProperty('--mist-2', dark ? `hsl(${(cssHue + 14) % 360} 28% 38%)` : `hsl(${(cssHue + 12) % 360} 44% 84%)`);
-    root.style.setProperty('--mist-3', dark ? `hsl(${(cssHue + 8) % 360} 34% 12%)` : `hsl(${(cssHue + 8) % 360} 50% 96%)`);
-    root.style.setProperty('--pink', dark ? `hsl(${(cssHue + 34) % 360} 48% 72%)` : `hsl(${(cssHue + 34) % 360} 54% 78%)`);
-    root.style.setProperty('--accent', dark ? `hsl(${cssHue} 72% 70%)` : `hsl(${cssHue} 62% 56%)`);
-    root.style.setProperty('--accent-2', dark ? `hsl(${(cssHue + 24) % 360} 68% 66%)` : `hsl(${(cssHue + 24) % 360} 68% 62%)`);
-    root.style.setProperty('--accent-3', dark ? `hsl(${(cssHue + 44) % 360} 58% 72%)` : `hsl(${(cssHue + 44) % 360} 64% 70%)`);
-    root.style.setProperty('--accent-soft', dark ? `hsla(${cssHue} 64% 68% / .18)` : `hsla(${cssHue} 66% 58% / .16)`);
-    root.style.setProperty('--accent-faint', dark ? `hsla(${cssHue} 70% 72% / .08)` : `hsla(${cssHue} 72% 60% / .10)`);
-    root.style.setProperty('--accent-border', dark ? `hsla(${cssHue} 48% 78% / .26)` : `hsla(${cssHue} 48% 44% / .28)`);
-    root.style.setProperty('--accent-glow', dark ? `hsla(${cssHue} 76% 68% / .28)` : `hsla(${cssHue} 72% 58% / .22)`);
-    root.style.setProperty('--line', dark ? `hsla(${cssHue} 32% 82% / .16)` : `hsla(${cssHue} 28% 46% / .24)`);
-    root.style.setProperty('--shadow', dark ? `0 18px 55px hsla(${cssHue} 60% 5% / .38)` : `0 18px 50px hsla(${cssHue} 35% 45% / .18)`);
-
-    $('#hueValue') && ($('#hueValue').textContent = displayHue);
-    $('#hueSlider') && ($('#hueSlider').value = displayHue);
-    storage.set('custom-hue', String(displayHue));
-  }
-
-  function applyBackgroundMode(mode) {
-    const safeMode = ['default', 'night'].includes(mode) ? mode : 'default';
-    root.classList.remove('bg-gradient', 'bg-night', 'bg-solid');
-    if (safeMode !== 'default') root.classList.add(`bg-${safeMode}`);
-    customState.bgMode = safeMode;
-    storage.set('custom-bg-mode', safeMode);
-    $$('[data-bg-mode]').forEach((btn) => btn.classList.toggle('active', btn.dataset.bgMode === safeMode));
-  }
-
-  function applyWallpaperSwitches() {
-    root.classList.toggle('custom-hide-hero-text', !customState.showHeroText);
-    root.classList.toggle('custom-hide-stars', !customState.showStars);
-    root.classList.toggle('custom-hide-meteor', !customState.showMeteor);
-    root.classList.remove('custom-hide-mist');
-    root.classList.toggle('custom-hide-divider-fx', !customState.showDividerFx);
-    const pairs = [
-      ['toggleHeroText', 'showHeroText'],
-      ['toggleStars', 'showStars'],
-      ['toggleMeteor', 'showMeteor'],
-      ['toggleDividerFx', 'showDividerFx']
-    ];
-    pairs.forEach(([id, key]) => {
-      const input = $(`#${id}`);
-      if (input) input.checked = customState[key];
-      storage.set(`custom-${key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}`, customState[key] ? '1' : '0');
-    });
-  }
-
-  function initThemePalette() {
+  function initTheme() {
     // 默认进入网站强制深色，避免浏览器里旧的 light 缓存把页面变浅色。
     root.dataset.theme = 'dark';
-    storage.set('theme', 'dark');
+    try { localStorage.setItem('theme', 'dark'); } catch (error) {}
     updateThemeButton();
-    applyAccentHue(customState.hue);
-    storage.remove('custom-show-mist');
-    applyBackgroundMode(customState.bgMode);
-    applyWallpaperSwitches();
     $('#themeBtn')?.addEventListener('click', () => {
       const next = currentTheme() === 'dark' ? 'light' : 'dark';
       root.dataset.theme = next;
-      storage.set('theme', next);
+      try { localStorage.setItem('theme', next); } catch (error) {}
       updateThemeButton();
-      applyAccentHue(customState.hue);
-    });
-    $('#paletteBtn')?.addEventListener('click', () => openModal('#paletteModal'));
-    $('#hueSlider')?.addEventListener('input', (event) => applyAccentHue(event.target.value));
-    $$('[data-bg-mode]').forEach((btn) => btn.addEventListener('click', () => applyBackgroundMode(btn.dataset.bgMode)));
-    $('#paletteResetBtn')?.addEventListener('click', () => {
-      storage.remove('custom-hue');
-      storage.remove('custom-bg-mode');
-      ['custom-show-hero-text', 'custom-show-stars', 'custom-show-meteor', 'custom-show-mist', 'custom-show-divider-fx'].forEach((key) => storage.remove(key));
-      Object.assign(customState, { hue: 210, bgMode: 'default', showHeroText: true, showStars: true, showMeteor: true, showDividerFx: true });
-      applyAccentHue(210);
-      applyBackgroundMode('default');
-      applyWallpaperSwitches();
-    });
-    [
-      ['toggleHeroText', 'showHeroText'],
-      ['toggleStars', 'showStars'],
-      ['toggleMeteor', 'showMeteor'],
-      ['toggleDividerFx', 'showDividerFx']
-    ].forEach(([id, key]) => $(`#${id}`)?.addEventListener('change', (event) => {
-      customState[key] = event.target.checked;
-      applyWallpaperSwitches();
-    }));
-  }
-
-  function openModal(target) {
-    const modal = typeof target === 'string' ? $(target) : target;
-    if (!modal) return;
-    lastFocusedBeforeModal = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
-    requestAnimationFrame(() => {
-      modal.querySelector('[data-close-modal], button, input, select, textarea, a[href]')?.focus();
-    });
-  }
-
-  function closeModal(modal) {
-    if (!modal) return;
-    modal.classList.remove('show');
-    modal.setAttribute('aria-hidden', 'true');
-    if (!$('.modal.show')) document.body.classList.remove('modal-open');
-    if (lastFocusedBeforeModal?.isConnected) lastFocusedBeforeModal.focus();
-    lastFocusedBeforeModal = null;
-  }
-
-  function initModal() {
-    $$('[data-close-modal]').forEach((btn) => btn.addEventListener('click', () => closeModal(btn.closest('.modal'))));
-    $$('.modal').forEach((modal) => modal.addEventListener('click', (event) => {
-      if (event.target === modal) closeModal(modal);
-    }));
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') $$('.modal.show').forEach(closeModal);
-      if (event.key !== 'Tab') return;
-      const modal = $('.modal.show');
-      if (!modal) return;
-      const focusable = $$('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])', modal)
-        .filter((element) => !element.hasAttribute('hidden') && element.getAttribute('aria-hidden') !== 'true');
-      if (!focusable.length) {
-        event.preventDefault();
-        return;
-      }
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
     });
   }
 
@@ -279,16 +124,14 @@
     };
     const draw = () => {
       ctx.clearRect(0, 0, innerWidth, innerHeight);
-      if (!root.classList.contains('custom-hide-stars')) {
-        stars.forEach((star) => {
-          star.a += star.s;
-          const alpha = .24 + Math.abs(Math.sin(star.a)) * .5;
-          ctx.beginPath();
-          ctx.fillStyle = `rgba(210,230,244,${alpha})`;
-          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-          ctx.fill();
-        });
-      }
+      stars.forEach((star) => {
+        star.a += star.s;
+        const alpha = .24 + Math.abs(Math.sin(star.a)) * .5;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(210,230,244,${alpha})`;
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
       requestAnimationFrame(draw);
     };
     resize(); draw();
@@ -303,15 +146,13 @@
       return;
     }
     const spawn = () => {
-      if (!root.classList.contains('custom-hide-meteor')) {
-        const meteor = document.createElement('span');
-        meteor.className = 'meteor fly';
-        meteor.style.left = `${Math.random() * 90 + 8}vw`;
-        meteor.style.top = `${Math.random() * 45 + 4}vh`;
-        meteor.style.animationDuration = `${Math.random() * 1.2 + 1.2}s`;
-        layer.appendChild(meteor);
-        setTimeout(() => meteor.remove(), 2600);
-      }
+      const meteor = document.createElement('span');
+      meteor.className = 'meteor fly';
+      meteor.style.left = `${Math.random() * 90 + 8}vw`;
+      meteor.style.top = `${Math.random() * 45 + 4}vh`;
+      meteor.style.animationDuration = `${Math.random() * 1.2 + 1.2}s`;
+      layer.appendChild(meteor);
+      setTimeout(() => meteor.remove(), 2600);
       setTimeout(spawn, Math.random() * 4200 + 2600);
     };
     setTimeout(spawn, 1200);
@@ -810,8 +651,7 @@
     setInterval(update, 1000);
   }
 
-  initModal();
-  initThemePalette();
+  initTheme();
   initTyping();
   initStars();
   initMeteor();
