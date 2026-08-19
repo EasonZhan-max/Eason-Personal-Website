@@ -13,37 +13,9 @@
     ]
   };
 
-  function currentTheme() {
-    return root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  }
-
-  function updateThemeButton() {
-    const dark = currentTheme() === 'dark';
-    const text = $('#themeText');
-    const icon = $('#themeIcon');
-    const button = $('#themeBtn');
-    if (text) text.textContent = dark ? '浅色' : '深色';
-    if (button) {
-      const label = dark ? '切换为浅色主题' : '切换为深色主题';
-      button.setAttribute('aria-label', label);
-      button.title = label;
-    }
-    if (icon) icon.innerHTML = dark
-      ? '<path d="M12 4v1.5M12 18.5V20M4 12h1.5M18.5 12H20M6.3 6.3l1 1M16.7 16.7l1 1M17.7 6.3l-1 1M7.3 16.7l-1 1"></path><circle cx="12" cy="12" r="4"></circle>'
-      : '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>';
-  }
-
   function initTheme() {
-    // 默认进入网站强制深色，避免浏览器里旧的 light 缓存把页面变浅色。
     root.dataset.theme = 'dark';
-    try { localStorage.setItem('theme', 'dark'); } catch (error) {}
-    updateThemeButton();
-    $('#themeBtn')?.addEventListener('click', () => {
-      const next = currentTheme() === 'dark' ? 'light' : 'dark';
-      root.dataset.theme = next;
-      try { localStorage.setItem('theme', next); } catch (error) {}
-      updateThemeButton();
-    });
+    try { localStorage.removeItem('theme'); } catch (error) {}
   }
 
   function initTyping() {
@@ -236,30 +208,41 @@
     }
 
     const games = [
-      { name: 'Astroneer', src: 'https://user15484.cn.imgto.link/public/20260629/img-5350.avif', ratio: 0.6667 },
-      { name: 'Delta Force', src: 'https://user15484.cn.imgto.link/public/20260629/img-5355.avif', ratio: 0.7765 },
+      // 生存、建造与开放世界
+      { name: 'Minecraft', src: 'https://user15484.cn.imgto.link/public/20260629/img-5674.avif', ratio: 0.6655 },
+      { name: 'Terraria', src: 'https://user15484.cn.imgto.link/public/20260629/img-5670.avif', ratio: 0.6655 },
       { name: "Don't Starve", src: 'https://user15484.cn.imgto.link/public/20260629/img-5348.avif', ratio: 0.6667 },
-      { name: "Garry's Mod", src: 'https://user15484.cn.imgto.link/public/20260629/img-5672.avif', ratio: 0.6655 },
-      { name: 'Goat Simulator', src: 'https://user15484.cn.imgto.link/public/20260629/img-5368.avif', ratio: 0.6708 },
+      { name: 'The Forest', src: 'https://user15484.cn.imgto.link/public/20260629/img-5363.avif', ratio: 0.6667 },
+      { name: 'Rust', src: 'https://user15484.cn.imgto.link/public/20260629/img-5673.avif', ratio: 0.749 },
+      { name: 'Unturned', src: 'https://user15484.cn.imgto.link/public/20260629/img-5367.avif', ratio: 0.6699 },
+      { name: 'Astroneer', src: 'https://user15484.cn.imgto.link/public/20260629/img-5350.avif', ratio: 0.6667 },
+
+      // 休闲、经营与资源管理
+      { name: 'Stardew Valley', src: 'https://user15484.cn.imgto.link/public/20260629/img-5328.avif', ratio: 0.75 },
+      { name: 'Slime Rancher', src: 'https://user15484.cn.imgto.link/public/20260629/img-5343.avif', ratio: 0.6655 },
+      { name: 'Kingdom Two Crowns', src: 'https://user15484.cn.imgto.link/public/20260818/img-6779.avif', ratio: 0.6673 },
+
+      // 2D 独立动作与剧情冒险
+      { name: 'Hollow Knight', src: 'https://user15484.cn.imgto.link/public/20260818/img-6777.avif', ratio: 0.6667 },
+      { name: 'Rain World', src: 'https://user15484.cn.imgto.link/public/20260818/img-6780.avif', ratio: 0.7082 },
+      { name: 'Lost Castle', src: 'https://user15484.cn.imgto.link/public/20260629/img-5676.avif', ratio: 0.6667 },
+      { name: 'Undertale', src: 'https://user15484.cn.imgto.link/public/20260629/img-5356.avif', ratio: 0.7636 },
+      { name: 'TO THE MOON', src: 'https://user15484.cn.imgto.link/public/20260629/img-5675.avif', ratio: 0.6667 },
+
+      // 探索与旅行
+      { name: 'Outer Wilds', src: 'https://user15484.cn.imgto.link/public/20260629/img-5342.avif', ratio: 0.7767 },
+      { name: 'Jalopy', src: 'https://user15484.cn.imgto.link/public/20260629/img-5360.avif', ratio: 0.6667 },
+
+      // 第一人称射击与多人合作恐怖
       { name: 'Half-Life', src: 'https://user15484.cn.imgto.link/public/20260629/img-5353.avif', ratio: 0.6961 },
       { name: 'Half-Life 2', src: 'https://user15484.cn.imgto.link/public/20260629/img-5354.avif', ratio: 0.727 },
-      { name: 'Jalopy', src: 'https://user15484.cn.imgto.link/public/20260629/img-5360.avif', ratio: 0.6667 },
       { name: 'Left 4 Dead 2', src: 'https://user15484.cn.imgto.link/public/20260629/img-5352.avif', ratio: 0.6667 },
       { name: 'Lethal Company', src: 'https://user15484.cn.imgto.link/public/20260629/img-5357.avif', ratio: 0.6667 },
-      { name: 'Minecraft', src: 'https://user15484.cn.imgto.link/public/20260629/img-5674.avif', ratio: 0.6655 },
-      { name: 'Outer Wilds', src: 'https://user15484.cn.imgto.link/public/20260629/img-5342.avif', ratio: 0.7767 },
-      { name: 'Rust', src: 'https://user15484.cn.imgto.link/public/20260629/img-5673.avif', ratio: 0.749 },
       { name: 'SCP: Secret Laboratory', src: 'https://user15484.cn.imgto.link/public/20260629/img-5344.avif', ratio: 0.7022 },
-      { name: 'Slime Rancher', src: 'https://user15484.cn.imgto.link/public/20260629/img-5343.avif', ratio: 0.6655 },
-      { name: 'Stardew Valley', src: 'https://user15484.cn.imgto.link/public/20260629/img-5328.avif', ratio: 0.75 },
-      { name: 'Terraria', src: 'https://user15484.cn.imgto.link/public/20260629/img-5670.avif', ratio: 0.6655 },
-      { name: 'The Forest', src: 'https://user15484.cn.imgto.link/public/20260629/img-5363.avif', ratio: 0.6667 },
-      { name: 'Undertale', src: 'https://user15484.cn.imgto.link/public/20260629/img-5356.avif', ratio: 0.7636 },
-      { name: 'Unturned', src: 'https://user15484.cn.imgto.link/public/20260629/img-5367.avif', ratio: 0.6699 },
-      { name: 'VRChat', src: 'https://user15484.cn.imgto.link/public/20260629/img-5671.avif', ratio: 0.749 },
-      { name: 'We Happy Few', src: 'https://user15484.cn.imgto.link/public/20260629/img-5362.avif', ratio: 0.7765 },
-      { name: 'TO THE MOON', src: 'https://user15484.cn.imgto.link/public/20260629/img-5675.avif', ratio: 0.6667 },
-      { name: 'Lost Castle', src: 'https://user15484.cn.imgto.link/public/20260629/img-5676.avif', ratio: 0.6667 }
+
+      // 沙盒创作与社交
+      { name: "Garry's Mod", src: 'https://user15484.cn.imgto.link/public/20260629/img-5672.avif', ratio: 0.6655 },
+      { name: 'VRChat', src: 'https://user15484.cn.imgto.link/public/20260629/img-5671.avif', ratio: 0.749 }
     ];
 
     function renderStaticGrid() {
