@@ -122,9 +122,10 @@
       meteor.className = 'meteor fly';
       meteor.style.left = `${Math.random() * 90 + 8}vw`;
       meteor.style.top = `${Math.random() * 45 + 4}vh`;
-      meteor.style.animationDuration = `${Math.random() * 1.2 + 1.2}s`;
+      const duration = Math.random() + 2.4;
+      meteor.style.animationDuration = `${duration}s`;
       layer.appendChild(meteor);
-      setTimeout(() => meteor.remove(), 2600);
+      setTimeout(() => meteor.remove(), (duration + .2) * 1000);
       setTimeout(spawn, Math.random() * 4200 + 2600);
     };
     setTimeout(spawn, 1200);
@@ -182,6 +183,59 @@
     let spawnQueue = [];
     let spawnTimer = 0;
     let attachDomDrag = null;
+    const desktopTiltQuery = window.matchMedia('(min-width: 901px) and (hover: hover) and (pointer: fine)');
+    let activeTiltItem = null;
+    let tiltFrame = 0;
+    let pendingTiltPoint = null;
+
+    const resetTiltItem = (item = activeTiltItem) => {
+      if (!item) return;
+      item.classList.remove('is-tilting');
+      item.style.setProperty('--tilt-x', '0deg');
+      item.style.setProperty('--tilt-y', '0deg');
+      item.style.setProperty('--magnet-x', '0px');
+      item.style.setProperty('--magnet-y', '0px');
+      item.style.setProperty('--shine-x', '50%');
+      item.style.setProperty('--shine-y', '50%');
+      if (item === activeTiltItem) activeTiltItem = null;
+    };
+
+    const updateTiltItem = () => {
+      tiltFrame = 0;
+      const point = pendingTiltPoint;
+      const item = activeTiltItem;
+      if (!point || !item || !item.isConnected) return;
+      const rect = item.getBoundingClientRect();
+      const x = Math.min(1, Math.max(0, (point.x - rect.left) / rect.width));
+      const y = Math.min(1, Math.max(0, (point.y - rect.top) / rect.height));
+      item.style.setProperty('--tilt-x', `${((.5 - y) * 16).toFixed(2)}deg`);
+      item.style.setProperty('--tilt-y', `${((x - .5) * 20).toFixed(2)}deg`);
+      item.style.setProperty('--magnet-x', `${((x - .5) * 10).toFixed(2)}px`);
+      item.style.setProperty('--magnet-y', `${((y - .5) * 10).toFixed(2)}px`);
+      item.style.setProperty('--shine-x', `${(x * 100).toFixed(1)}%`);
+      item.style.setProperty('--shine-y', `${(y * 100).toFixed(1)}%`);
+    };
+
+    staticGrid.addEventListener('pointermove', (event) => {
+      if (!desktopTiltQuery.matches || prefersReducedMotion || started) return;
+      const item = event.target.closest('.physics-static-item');
+      if (!item || !staticGrid.contains(item)) {
+        resetTiltItem();
+        return;
+      }
+      if (activeTiltItem !== item) {
+        resetTiltItem();
+        activeTiltItem = item;
+        item.classList.add('is-tilting');
+      }
+      pendingTiltPoint = { x: event.clientX, y: event.clientY };
+      if (!tiltFrame) tiltFrame = requestAnimationFrame(updateTiltItem);
+    });
+    staticGrid.addEventListener('pointerleave', () => resetTiltItem());
+    staticGrid.addEventListener('pointercancel', () => resetTiltItem());
+    desktopTiltQuery.addEventListener('change', () => {
+      if (!desktopTiltQuery.matches) resetTiltItem();
+    });
 
     function setButtonState(mode = 'static') {
       const active = mode === 'active';
@@ -230,7 +284,7 @@
       { name: 'TO THE MOON', src: 'https://user15484.cn.imgto.link/public/20260629/img-5675.avif', ratio: 0.6667 },
 
       // 探索与旅行
-      { name: 'Outer Wilds', src: 'https://user15484.cn.imgto.link/public/20260629/img-5342.avif', ratio: 0.7767 },
+      { name: 'Outer Wilds', src: 'https://user15484.cn.imgto.link/public/20260819/img-5342.avif', ratio: 0.7767 },
       { name: 'Jalopy', src: 'https://user15484.cn.imgto.link/public/20260629/img-5360.avif', ratio: 0.6667 },
 
       // 第一人称射击与多人合作恐怖
@@ -409,6 +463,7 @@
 
     function startPhysics(Matter) {
       if (started) return;
+      resetTiltItem();
       started = true;
       loadingMatter = false;
       stage.classList.remove('is-static');
@@ -694,6 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const playlistItems = overlay.querySelector('#musicPlaylistItems');
 
   const songs = [
+    { title: 'Undertale', artist: 'Toby Fox', src: 'audio/undertale-toby-fox.mp3', cover: 'images/game_full/undertale.png' },
     { title: 'Rain with Cappuccino - Lofi Remix ft. KAY440', artist: 'Venvn / HANA / KAY440', src: 'audio/rain-with-cappuccino.mp3', cover: 'images/music/rain-with-cappuccino.jpg' },
     { title: 'mure (Solo at Fluss)', artist: 'hideyuki hashimoto', src: 'audio/mure-solo-at-fluss.flac', cover: 'images/music/mure-solo-at-fluss.jpg' }
   ];
@@ -713,6 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let current = 0;
   let mode = 'list';
   let seeking = false;
+  let panelCloseTimer = 0;
 
   const formatTime = (value) => {
     const sec = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
@@ -812,12 +869,22 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(positionPlaylist);
   };
   const closePanel = () => {
-    panel.classList.remove('is-open');
-    panel.setAttribute('aria-hidden', 'true');
+    if (!panel.classList.contains('is-open') && !panel.classList.contains('is-closing')) return;
+    window.clearTimeout(panelCloseTimer);
+    panel.classList.add('is-closing');
     toggleBtn.setAttribute('aria-expanded', 'false');
     closeList();
+    panelCloseTimer = window.setTimeout(() => {
+      panel.classList.remove('is-closing');
+      panel.classList.remove('is-open');
+      panel.setAttribute('aria-hidden', 'true');
+      panelCloseTimer = 0;
+    }, 320);
   };
   const openPanel = () => {
+    window.clearTimeout(panelCloseTimer);
+    panelCloseTimer = 0;
+    panel.classList.remove('is-closing');
     panel.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
     toggleBtn.setAttribute('aria-expanded', 'true');
@@ -849,7 +916,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   toggleBtn.addEventListener('click', (event) => {
     event.preventDefault();
-    if (panel.classList.contains('is-open')) closePanel();
+    if (panel.classList.contains('is-closing')) openPanel();
+    else if (panel.classList.contains('is-open')) closePanel();
     else openPanel();
   });
   closeBtn.addEventListener('click', () => {
