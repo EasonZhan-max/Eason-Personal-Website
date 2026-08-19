@@ -6998,3 +6998,77 @@ textarea:focus-visible,
     transition-duration: .01ms !important;
   }
 }
+
+/* 20260818: fixed dark theme and tighter responsive layout */
+.backtop,
+#backTopBtn {
+  border-radius: 12px !important;
+}
+
+#musicPanel .music-controls {
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+@media (max-width: 680px) {
+  .about-layout {
+    grid-template-columns: minmax(112px, .72fr) minmax(0, 1.28fr) !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .about-avatar-card,
+  .about-text-card {
+    min-height: 252px !important;
+    padding: 16px !important;
+  }
+
+  .about-avatar-card {
+    align-content: center !important;
+  }
+
+  .about-avatar-img {
+    width: min(100%, 126px) !important;
+    border-radius: 24px !important;
+  }
+
+  .about-avatar-card h2 {
+    margin: 16px 0 0 !important;
+    font-size: 30px !important;
+  }
+
+  .about-text-card {
+    justify-content: center !important;
+  }
+
+  .about-text-card p {
+    font-size: 15px !important;
+    line-height: 1.65 !important;
+  }
+
+  .about-contact-btn {
+    width: 100% !important;
+    min-height: 38px !important;
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .about-layout {
+    grid-template-columns: minmax(104px, .7fr) minmax(0, 1.3fr) !important;
+    gap: 10px !important;
+  }
+
+  .about-avatar-card,
+  .about-text-card {
+    padding: 13px !important;
+  }
+
+  .about-avatar-img {
+    width: min(100%, 112px) !important;
+  }
+
+  .about-text-card p {
+    font-size: 14px !important;
+  }
+}
