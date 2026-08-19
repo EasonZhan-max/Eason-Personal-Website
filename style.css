@@ -292,9 +292,9 @@ html[data-theme="dark"] .contact-link { background: rgba(255,255,255,.05); }
 
 /* 20260621：流星与分隔装饰 */
 .meteor-layer { position: fixed; inset: 0; z-index: 999; pointer-events: none; overflow: hidden; }
-.meteor { position: absolute; width: 180px; height: 2px; border-radius: 999px; background: linear-gradient(90deg, rgba(235,248,255,.95), rgba(204,231,246,.35), transparent); transform: rotate(-28deg); opacity: 0; filter: drop-shadow(0 0 7px rgba(190,228,247,.35)); }
+.meteor { position: absolute; width: 180px; height: 2px; border-radius: 999px; background: linear-gradient(90deg, rgba(235,248,255,.95), rgba(204,231,246,.35), transparent); transform: rotate(-28deg); transform-origin: center; opacity: 0; filter: drop-shadow(0 0 7px rgba(190,228,247,.35)); will-change: transform, opacity; }
 .meteor.fly { animation: meteorFly linear forwards; }
-@keyframes meteorFly { 0% { opacity: 0; transform: translate3d(0,0,0) rotate(-28deg); } 12% { opacity: .9; } 100% { opacity: 0; transform: translate3d(-42vw,42vh,0) rotate(-28deg); } }
+@keyframes meteorFly { 0% { opacity: 0; transform: translate3d(0,0,0) rotate(-28deg); } 12% { opacity: .9; } 100% { opacity: 0; transform: translate3d(-105vmax,55.8vmax,0) rotate(-28deg); } }
 
 .hero-divider {
   position: relative;
@@ -7070,5 +7070,150 @@ textarea:focus-visible,
 
   .about-text-card p {
     font-size: 14px !important;
+  }
+}
+
+/* 20260819: cleaner favorite-game cards and three-column mobile grid */
+html[data-theme="dark"] .favorite-game-item,
+.favorite-game-item {
+  background: transparent !important;
+}
+
+.favorite-game-item strong {
+  padding: 8px 10px !important;
+  background: none !important;
+}
+
+@media (max-width: 680px) {
+  .favorite-games-card {
+    padding: 14px !important;
+  }
+
+  .favorite-games-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .favorite-game-item {
+    border-radius: 14px !important;
+  }
+
+  .favorite-game-item strong {
+    padding: 7px !important;
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+  }
+}
+
+/* 20260819: visible, interruptible music-player close motion */
+#musicPanel {
+  transform-origin: top center !important;
+  filter: blur(2px) !important;
+  transition: opacity .3s cubic-bezier(.4, 0, .2, 1), transform .3s cubic-bezier(.4, 0, .2, 1), filter .3s ease !important;
+}
+
+#musicPanel.is-open {
+  filter: blur(0) !important;
+}
+
+#musicPanel.is-closing {
+  opacity: 0 !important;
+  transform: translateX(-50%) translateY(-10px) scale(.94) !important;
+  filter: blur(2px) !important;
+  pointer-events: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #musicPanel {
+    transition: none !important;
+  }
+}
+
+/* 20260819: desktop glassmorphism + magnetic 3D game-card tilt */
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) {
+  .physics-static-grid {
+    perspective: 1200px;
+    perspective-origin: center;
+  }
+
+  .physics-static-item {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --magnet-x: 0px;
+    --magnet-y: 0px;
+    --shine-x: 50%;
+    --shine-y: 50%;
+    --card-scale: 1;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgba(220, 239, 255, .22) !important;
+    border-radius: 16px !important;
+    background: linear-gradient(145deg, rgba(225, 241, 255, .13), rgba(112, 148, 177, .05)) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(255, 255, 255, .18);
+    backdrop-filter: blur(12px) saturate(125%);
+    -webkit-backdrop-filter: blur(12px) saturate(125%);
+    transform-style: preserve-3d;
+    transform: translate3d(var(--magnet-x), var(--magnet-y), 0) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale(var(--card-scale));
+    transition: transform .3s cubic-bezier(.2, .8, .2, 1), border-color .25s ease, box-shadow .3s ease;
+    will-change: transform;
+  }
+
+  .physics-static-item::before,
+  .physics-static-item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .physics-static-item::before {
+    background: radial-gradient(circle at var(--shine-x) var(--shine-y), rgba(255, 255, 255, .62) 0, rgba(199, 228, 250, .22) 18%, transparent 52%);
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity .22s ease;
+  }
+
+  .physics-static-item::after {
+    inset: 1px;
+    border: 1px solid rgba(255, 255, 255, .14);
+    background: linear-gradient(135deg, rgba(255, 255, 255, .18), transparent 34%, transparent 68%, rgba(160, 205, 235, .10));
+  }
+
+  .physics-static-item img {
+    position: relative;
+    z-index: 1;
+    transform: translateZ(18px) scale(1.025);
+    transition: filter .3s ease, transform .34s cubic-bezier(.2, .75, .25, 1);
+  }
+
+  .physics-static-item.is-tilting {
+    --card-scale: 1.035;
+    z-index: 5;
+    border-color: color-mix(in srgb, var(--accent) 58%, rgba(255,255,255,.34)) !important;
+    box-shadow: 0 24px 46px rgba(0, 0, 0, .36), 0 0 28px color-mix(in srgb, var(--accent-glow) 62%, transparent), inset 0 1px 0 rgba(255, 255, 255, .25);
+    transition-duration: .08s, .2s, .2s;
+  }
+
+  .physics-static-item.is-tilting::before {
+    opacity: .78;
+  }
+
+  .physics-static-item.is-tilting img {
+    filter: saturate(1.08) brightness(1.04);
+    transform: translateZ(26px) scale(1.045);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .physics-static-item {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .physics-static-item img {
+    animation: none !important;
+    transition: none !important;
   }
 }
