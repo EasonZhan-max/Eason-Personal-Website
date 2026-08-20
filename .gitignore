@@ -1,0 +1,7 @@
+vrchat-status-worker/node_modules/
+vrchat-status-worker/.dev.vars
+vrchat-status-worker/.wrangler/
+vrchat-status-sync/bin/
+vrchat-status-sync/obj/
+vrchat-status-sync/config.json
+*.log

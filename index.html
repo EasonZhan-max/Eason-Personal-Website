@@ -14,6 +14,7 @@
   <meta property="og:image" content="https://user14491.cn.imgto.link/public/20260619/img-4913-1.avif" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#08131f" />
+  <meta name="vrc-status-endpoint" content="https://eason-vrchat-status.erk21635.workers.dev/status" />
   <link rel="preconnect" href="https://user14491.cn.imgto.link" crossorigin />
   <link rel="preconnect" href="https://user15484.cn.imgto.link" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -98,9 +99,31 @@
       </div>
     </section>
 <section class="section about-layout" id="aboutMe">
-      <section class="about-avatar-card">
-        <img class="about-avatar-img" src="https://user15484.cn.imgto.link/public/20260818/img-6728.avif" alt="Eason头像" loading="lazy" decoding="async" />
-        <h2>Eason</h2>
+      <section class="vrc-profile-card" id="vrcStatusCard" data-online="false" aria-label="VRChat 个人状态" aria-live="polite">
+        <div class="vrc-cover">
+          <img id="vrcCover" src="https://user15484.cn.imgto.link/public/20260818/img-6728.avif" alt="VRChat 个人封面" loading="lazy" decoding="async" />
+          <span class="vrc-card-label">VRCHAT STATUS</span>
+        </div>
+        <div class="vrc-profile-body">
+          <div class="vrc-identity">
+            <img class="vrc-avatar" id="vrcAvatar" src="https://user15484.cn.imgto.link/public/20260818/img-6728.avif" alt="Eason 的 VRChat 头像" loading="lazy" decoding="async" />
+            <div class="vrc-identity-main">
+              <div class="vrc-name-row">
+                <h2 id="vrcDisplayName">EasonZhan</h2>
+                <span class="vrc-pronouns" id="vrcPronouns" hidden></span>
+              </div>
+              <span class="vrc-status-pill" id="vrcStatusPill"><i aria-hidden="true"></i><span id="vrcStatusText">等待同步</span></span>
+            </div>
+          </div>
+          <p class="vrc-bio" id="vrcBio">你好，我是Eason，欢迎加我的VRChat好友，来找我玩。</p>
+          <div class="vrc-badges" id="vrcBadges" aria-label="VRChat 徽章" hidden></div>
+          <div class="vrc-groups" id="vrcGroups" hidden></div>
+          <div class="vrc-live-meta" id="vrcLiveMeta" hidden>
+            <div><span>当前世界</span><strong id="vrcWorld">—</strong></div>
+            <div><span>已停留</span><strong id="vrcDuration">—</strong></div>
+          </div>
+          <p class="vrc-updated" id="vrcUpdated">状态服务尚未连接</p>
+        </div>
       </section>
       <section class="profile-card about-text-card">
                 <p>你好，我是Eason，一名高中生，欢迎加我的VRChat好友，来找我玩。</p>
@@ -212,6 +235,7 @@
 
   <button class="backtop is-hidden" id="backTopBtn" type="button" aria-label="返回顶部">↑</button>
   <script src="main.js?v=20260819-game-tilt-spring"></script>
+  <script src="vrc-status.js?v=20260820-v1"></script>
 
   <script type="module">
     const WALINE_SERVER_URL = 'https://example.easonzhan.xyz';
