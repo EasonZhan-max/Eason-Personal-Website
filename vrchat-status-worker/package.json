@@ -1,0 +1,19 @@
+{
+  "name": "eason-vrchat-status-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --local",
+    "types": "wrangler types",
+    "check": "wrangler types --check && tsc --noEmit",
+    "deploy:dry": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy --minify"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260820.1",
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2",
+    "wrangler": "4.124.0"
+  }
+}

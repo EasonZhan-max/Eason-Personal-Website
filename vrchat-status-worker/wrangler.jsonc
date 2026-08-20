@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "eason-vrchat-status",
+  "main": "src/index.ts",
+  "workers_dev": true,
+  "compatibility_date": "2026-08-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "secrets": {
+    "required": ["UPLOAD_SECRET"]
+  },
+  "kv_namespaces": [
+    {
+      "binding": "STATUS_KV"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "vrchat-status.easonzhan.xyz",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "STATUS_TTL_SECONDS": "100"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.1
+    }
+  }
+}
