@@ -7129,6 +7129,358 @@ html[data-theme="dark"] .favorite-game-item,
   }
 }
 
+/* 20260820: live VRChat profile card */
+.vrc-profile-card {
+  position: relative;
+  min-width: 0;
+  min-height: 420px;
+  overflow: hidden;
+  border: 1px solid rgba(139, 192, 232, .26);
+  border-radius: 28px;
+  background: linear-gradient(155deg, rgba(13, 29, 44, .78), rgba(6, 19, 31, .66));
+  box-shadow: var(--shadow), inset 0 1px rgba(255, 255, 255, .08);
+  backdrop-filter: blur(18px) saturate(1.22);
+  -webkit-backdrop-filter: blur(18px) saturate(1.22);
+  isolation: isolate;
+}
+
+.vrc-profile-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 84% 10%, rgba(115, 183, 236, .16), transparent 30%),
+    linear-gradient(120deg, rgba(255, 255, 255, .025), transparent 38%);
+  pointer-events: none;
+}
+
+.vrc-cover {
+  position: relative;
+  height: 122px;
+  overflow: hidden;
+  background: rgba(83, 139, 181, .12);
+}
+
+.vrc-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 34%;
+  filter: saturate(.9) brightness(.76);
+  transform: scale(1.03);
+}
+
+.vrc-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 14, 23, .04) 20%, rgba(5, 16, 27, .88) 100%);
+  pointer-events: none;
+}
+
+.vrc-card-label {
+  position: absolute;
+  top: 14px;
+  left: 15px;
+  z-index: 1;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 9px;
+  color: rgba(255, 255, 255, .78);
+  background: rgba(7, 20, 31, .44);
+  backdrop-filter: blur(10px);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .15em;
+}
+
+.vrc-profile-body {
+  position: relative;
+  padding: 0 20px 20px;
+}
+
+.vrc-identity {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 13px;
+  align-items: end;
+  margin-top: -36px;
+}
+
+.vrc-avatar {
+  width: 78px;
+  height: 78px;
+  border: 3px solid rgba(8, 22, 34, .94);
+  border-radius: 22px;
+  object-fit: cover;
+  background: #f5f7fa;
+  box-shadow: 0 13px 30px rgba(0, 0, 0, .34), inset 0 1px rgba(255, 255, 255, .25);
+}
+
+.vrc-identity-main {
+  min-width: 0;
+  padding-bottom: 3px;
+}
+
+.vrc-name-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
+
+.vrc-name-row h2 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #eef7ff;
+  font-size: clamp(20px, 2.4vw, 27px);
+  line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vrc-pronouns {
+  flex: 0 0 auto;
+  max-width: 92px;
+  padding: 3px 7px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 999px;
+  color: rgba(222, 237, 249, .67);
+  background: rgba(255, 255, 255, .055);
+  font-size: 10px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vrc-status-pill {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  padding: 4px 9px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, .24);
+  border-radius: 999px;
+  color: #b9c6d1;
+  background: rgba(12, 25, 38, .66);
+  font-size: 11px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vrc-status-pill i {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #82909b;
+  box-shadow: 0 0 0 3px rgba(130, 144, 155, .12);
+}
+
+.vrc-profile-card[data-online="true"] .vrc-status-pill {
+  border-color: rgba(78, 225, 157, .32);
+  color: #bdf4d8;
+  background: rgba(24, 113, 76, .18);
+}
+
+.vrc-profile-card[data-online="true"] .vrc-status-pill i {
+  background: #49dc91;
+  box-shadow: 0 0 0 3px rgba(73, 220, 145, .15), 0 0 12px rgba(73, 220, 145, .5);
+}
+
+.vrc-profile-card[data-status="busy"] .vrc-status-pill {
+  border-color: rgba(248, 113, 113, .32);
+  color: #ffd0d0;
+  background: rgba(127, 29, 29, .2);
+}
+
+.vrc-profile-card[data-status="busy"] .vrc-status-pill i {
+  background: #fb7185;
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, .14);
+}
+
+.vrc-bio {
+  max-height: 88px;
+  margin: 16px 0 0;
+  padding-right: 5px;
+  overflow: auto;
+  color: rgba(219, 233, 244, .72);
+  font-size: 13px;
+  line-height: 1.65;
+  scrollbar-color: rgba(142, 181, 211, .36) transparent;
+  scrollbar-width: thin;
+  white-space: pre-wrap;
+}
+
+.vrc-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 13px;
+}
+
+.vrc-badge-item {
+  width: 29px;
+  height: 29px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .06);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .08);
+}
+
+.vrc-badge-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vrc-groups {
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(146, 184, 214, .14);
+}
+
+.vrc-groups::before {
+  content: "置顶群组";
+  color: rgba(194, 216, 232, .48);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+
+.vrc-group-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  color: rgba(230, 240, 248, .84);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.vrc-group-row img {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.vrc-group-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vrc-live-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid rgba(115, 183, 236, .16);
+  border-radius: 15px;
+  background: rgba(75, 143, 195, .09);
+}
+
+.vrc-live-meta > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.vrc-live-meta span {
+  color: rgba(194, 216, 232, .46);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+
+.vrc-live-meta strong {
+  overflow: hidden;
+  color: #e2f1fc;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vrc-updated {
+  margin: 12px 0 0;
+  color: rgba(188, 211, 227, .42);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.vrc-profile-card [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 680px) {
+  .about-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .vrc-profile-card {
+    min-height: 0;
+    border-radius: 22px;
+  }
+
+  .vrc-cover {
+    height: 112px;
+  }
+
+  .vrc-profile-body {
+    padding: 0 16px 16px;
+  }
+
+  .vrc-identity {
+    grid-template-columns: 70px minmax(0, 1fr);
+    margin-top: -32px;
+  }
+
+  .vrc-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+  }
+
+  .vrc-name-row h2 {
+    font-size: 22px;
+  }
+
+  .vrc-bio {
+    max-height: 76px;
+  }
+
+  .about-text-card {
+    min-height: auto !important;
+    padding: 20px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .vrc-live-meta {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .vrc-pronouns {
+    max-width: 72px;
+  }
+}
+
 /* 20260819: desktop glassmorphism + magnetic 3D game-card tilt */
 @media (min-width: 901px) and (hover: hover) and (pointer: fine) {
   .physics-static-grid {
